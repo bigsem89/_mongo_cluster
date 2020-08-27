@@ -67,6 +67,51 @@ resource "aws_security_group" "Mongo-sg" {
     }
 }
 
+# create an ansible inventory file
+resource "null_resource" "ansible-provision" {
+  depends_on = [aws_instance.mongo-test1, aws_instance.mongo-test2, aws_instance.mongo-test3]
+
+  provisioner "local-exec" {
+    command = "echo [mongo_master] > hosts"
+  }
+
+  provisioner "local-exec" {
+    command = "echo ${aws_instance.mongo-test1.tags.Name} ansible_host=${aws_instance.mongo-test1.public_ip} ansible_ssh_user=root >> hosts"
+  }
+
+  provisioner "local-exec" {
+    command = "echo # >> hosts"
+  }
+
+  provisioner "local-exec" {
+    command = "echo [mongo_replicas] >> hosts"
+  }
+
+  provisioner "local-exec" {
+    command = "echo ${aws_instance.mongo-test2.tags.Name} ansible_host=${aws_instance.mongo-test2.public_ip} ansible_ssh_user=root >> hosts"
+  }
+
+  provisioner "local-exec" {
+    command = "echo ${aws_instance.mongo-test3.tags.Name} ansible_host=${aws_instance.mongo-test3.public_ip} ansible_ssh_user=root >> hosts"
+  }
+
+  provisioner "local-exec" {
+    command = "echo # >> hosts"
+  }
+
+  provisioner "local-exec" {
+    command = "echo [mongo:children] >> hosts"
+  }
+
+  provisioner "local-exec" {
+    command = "echo mongo_master >> hosts"
+  }
+
+  provisioner "local-exec" {
+    command = "echo mongo_replicas >> hosts"
+  }
+}
+
 output "WebServer_instance_id" {
   value = aws_instance.mongo-test1.id
 }
