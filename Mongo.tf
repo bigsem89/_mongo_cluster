@@ -1,64 +1,72 @@
-variable "do_token" {}
-variable "do_region" {}
-variable "do_image" {}
-variable "do_size" {}
+#----------------------------------------
+# My terraform
+#
+#Build Servers
+#
+#Made by Semyon Aronov
 
-provider "digitalocean" {
-  token = "${var.do_token}"
+provider "aws" {}
+
+resource "aws_instance" "mongo-test1" {
+    ami                    = "ami-03d4fca0a9ced3d1f" #Ubuntu 18.04 linux AMI
+    instance_type          = "t3.micro"
+    key_name               = "Mongo_Cluster"
+    vpc_security_group_ids = [aws_security_group.Mongo-sg.id]
+
+  tags = {
+     Name  = "mongo-test1"
+     Owner = "Semyon Aronov"
+  }
 }
 
-# Create a new SSH key
-resource "digitalocean_ssh_key" "ins_default" {
-  name       = "InSales testcase"
-  public_key = "${file("~/.ssh/id_rsa.pub")}"
+resource "aws_instance" "mongo-test2" {
+    ami                    = "ami-03d4fca0a9ced3d1f" #Ubuntu 18.04 linux AMI
+    instance_type          = "t3.micro"
+    key_name               = "Mongo_Cluster"
+    vpc_security_group_ids = [aws_security_group.Mongo-sg.id]
+
+  tags = {
+     Name  = "mongo-test2"
+     Owner = "Semyon Aronov"
+  }
 }
 
-# create two demo droplets
-resource "digitalocean_droplet" "mongo-test1" {
-  name     = "mongo-test1"
-  image    = "${var.do_image}"
-  region   = "${var.do_region}"
-  size     = "${var.do_size}"
-  ssh_keys = ["${digitalocean_ssh_key.ins_default.fingerprint}"]
+resource "aws_instance" "mongo-test3" {
+    ami                    = "ami-03d4fca0a9ced3d1f" #Ubuntu 18.04 linux AMI
+    instance_type          = "t3.micro"
+    key_name               = "Mongo_Cluster"
+    vpc_security_group_ids = [aws_security_group.Mongo-sg.id]
+
+  tags = {
+     Name  = "mongo-test3"
+     Owner = "Semyon Aronov"
+  }
 }
 
-resource "digitalocean_droplet" "mongo-test2" {
-  name     = "mongo-test2"
-  image    = "${var.do_image}"
-  region   = "${var.do_region}"
-  size     = "${var.do_size}"
-  ssh_keys = ["${digitalocean_ssh_key.ins_default.fingerprint}"]
+resource "aws_security_group" "Mongo-sg" {
+    name        = "WebServer Security Group"
+    description = "My security group"
+
+    ingress {
+      from_port = 22
+      to_port = 22
+      protocol = "tcp"
+      cidr_blocks = ["109.252.62.10/32"]
+    }
+
+    egress {
+      from_port = 0
+      to_port = 0
+      protocol = "-1"
+      cidr_blocks = ["0.0.0.0/0"]
+    }
+
+    tags = {
+       Name  = "MongoDb Security Group"
+       Owner = "Semyon Aronov"
+    }
 }
 
-resource "digitalocean_droplet" "mongo-test3" {
-  name     = "mongo-test3"
-  image    = "${var.do_image}"
-  region   = "${var.do_region}"
-  size     = "${var.do_size}"
-  ssh_keys = ["${digitalocean_ssh_key.ins_default.fingerprint}"]
-}
-
-# create an ansible inventory file
-resource "null_resource" "ansible-provision" {
-  depends_on = ["digitalocean_droplet.mongo-test1", "digitalocean_droplet.mongo-test2", "digitalocean_droplet.mongo-test3"]
-
-  provisioner "local-exec" {
-    command = "echo [mongo] > hosts"
-  }
-
-  provisioner "local-exec" {
-    command = "echo '${digitalocean_droplet.mongo-test1.name} ansible_host=${digitalocean_droplet.mongo-test1.ipv4_address} ansible_ssh_user=root' >> hosts"
-  }
-
-  provisioner "local-exec" {
-    command = "echo '${digitalocean_droplet.mongo-test2.name} ansible_host=${digitalocean_droplet.mongo-test2.ipv4_address} ansible_ssh_user=root' >> hosts"
-  }
-
-  provisioner "local-exec" {
-    command = "echo '${digitalocean_droplet.mongo-test3.name} ansible_host=${digitalocean_droplet.mongo-test3.ipv4_address} ansible_ssh_user=root' >> hosts"
-  }
-
-  provisioner "local-exec" {
-    command = "cat hosts.example >> hosts"
-  }
+output "WebServer_instance_id" {
+  value = aws_instance.mongo-test1.id
 }
