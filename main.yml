@@ -2,7 +2,7 @@
 
 - hosts: all
   become: true
-  gather_facts: false
+  gather_facts: yes
   pre_tasks:
     - name: Update apt cache
       apt:
@@ -12,13 +12,5 @@
       setup:
 
 - hosts: mongo
-  gather_facts: yes
   roles:
     - role: mongodb
-      when: "'mongo_master' in group_names"
-
-- hosts: mongo
-  gather_facts: yes
-  roles:
-    - role: mongodb
-      when: "'mongo_replicas' in group_names"

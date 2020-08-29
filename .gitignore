@@ -10,3 +10,4 @@ vendor
 terraform.tfvars
 terraform.tfstate*
 hosts
+secret

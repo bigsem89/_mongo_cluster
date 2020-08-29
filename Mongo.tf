@@ -56,6 +56,13 @@ resource "aws_security_group" "Mongo-sg" {
       cidr_blocks = ["109.252.62.10/32"]
     }
 
+    ingress {
+      from_port = 27017
+      to_port = 27017
+      protocol = "tcp"
+      cidr_blocks = ["0.0.0.0/0"]
+    }
+
     egress {
       from_port = 0
       to_port = 0
@@ -114,6 +121,14 @@ resource "null_resource" "ansible-provision" {
   }
 }
 
-output "WebServer_instance_id" {
-  value = aws_instance.mongo-test1.id
+output "mongo-test1_ip" {
+  value = aws_instance.mongo-test1.private_ip
+}
+
+output "mongo-test2_ip" {
+  value = aws_instance.mongo-test2.private_ip
+}
+
+output "mongo-test3_ip" {
+  value = aws_instance.mongo-test3.private_ip
 }

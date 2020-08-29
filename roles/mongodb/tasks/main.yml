@@ -1,20 +1,37 @@
 ---
 # tasks file for mongodb
+- name: add hosts
+  become: yes
+  lineinfile:
+    path: /etc/hosts
+    insertbefore: BOF
+    line: "{{ item }}"
+  loop:
+    - '{{ mongodb_primary }} mongo-test1'
+    - '{{ mongodb_secondary_1 }} mongo-test2'
+    - '{{ mongodb_secondary_2 }} mongo-test3'
 
 - name: Import the public key
   shell:
-    wget -qO - https://www.mongodb.org/static/pgp/server-4.4.asc | sudo apt-key add -
+    wget -qO - https://www.mongodb.org/static/pgp/server-4.4.asc |
+    sudo apt-key add -
 
 - name: Create a list file for MongoDB
   shell:
-    echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu bionic/mongodb-org/4.4 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.4.list
-
+    echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu bionic/mongodb-org/4.4 multiverse" |
+    sudo tee /etc/apt/sources.list.d/mongodb-org-4.4.list
 
 - name: Update repositories cache and install "MongoDB" package
   become: yes
   apt:
     name: mongodb-org
     update_cache: yes
+
+- name: Template a file to /etc/mongod.conf
+  become: yes
+  template:
+    src: mongod.conf.j2
+    dest: /etc/mongod.conf
 
 - name: Service mongod is running
   become: yes
