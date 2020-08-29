@@ -25,13 +25,16 @@ net:
 #processManagement:
 
 security:
-  authorization: disabled
+  keyFile: /etc/mongodb/mongo-keyfile
+
 operationProfiling:
   slowOpThresholdMs: 200
   mode: slowOp
   slowOpSampleRate: 100
+
 replication:
   replSetName: {{ mongodb_replication_replset }}
+
 #sharding:
 ## Enterprise-Only Options:
 #auditLog:

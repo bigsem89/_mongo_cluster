@@ -33,6 +33,24 @@
     src: mongod.conf.j2
     dest: /etc/mongod.conf
 
+- block: #===============keyFile===================
+
+  - name: Create /etc/mongodb directory if it does not exist
+    file:
+      path: /etc/mongodb
+      state: directory
+      owner: mongodb
+      mode: '0700'
+
+  - name: Copy mongodb keyfile
+    copy:
+      src: MongoDB.pem
+      dest: /etc/mongodb/mongo-keyfile
+      owner: mongodb
+      mode: '0600'
+      
+  become: true
+
 - name: Service mongod is running
   become: yes
   systemd:

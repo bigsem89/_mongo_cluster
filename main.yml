@@ -14,3 +14,11 @@
 - hosts: mongo
   roles:
     - role: mongodb
+
+- hosts: mongo_master
+  roles:
+    - role: replicaset
+
+- hosts: mongo_replicas
+  roles:
+    - role: replicaset

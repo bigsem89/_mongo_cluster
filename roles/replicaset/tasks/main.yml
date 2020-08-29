@@ -1,0 +1,38 @@
+---
+# tasks file for replicaset
+
+- name: Add necessary files
+  template:
+    src: "{{item}}.js.j2"
+    dest: "./{{item}}.js"
+  loop:
+    - initReplicaset
+    - UserAdmin
+    - UserRoot
+
+- name: Init replicaset {{ inventory_hostname }} (not authenticated)
+  shell:
+    mongo ./initReplicaset.js
+  register: replicaset_result
+
+- name: wait for 10 seconds for MongoDb election completed
+  wait_for:
+    timeout: 10
+  delegate_to: localhost
+  run_once: true
+
+  #########################################################################
+- name: Create MongoDb users
+  block:
+
+  - name: Create Admin User
+    shell:
+      mongo admin ./UserAdmin.js
+
+  - name: Create Root User
+    shell:
+      mongo --username {{ mongodb_user_admin_name }} --password {{ mongodb_user_admin_password }} admin ./UserRoot.js
+
+  when:
+    "'mongo_master' in group_names"
+  #########################################################################

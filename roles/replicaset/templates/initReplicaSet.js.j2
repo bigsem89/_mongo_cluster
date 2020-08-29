@@ -1,0 +1,12 @@
+rs.initiate(
+   {
+      _id: "rp0",
+      version: 1,
+      members: [
+         { _id: 0, host : "mongo-test1:27017" },
+         { _id: 1, host : "mongo-test2:27017" },
+         { _id: 2, host : "mongo-test3:27017" }
+      ]
+   }
+)
+printjson(rs.status())

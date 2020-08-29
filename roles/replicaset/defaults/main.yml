@@ -1,0 +1,6 @@
+---
+# defaults file for replicaset
+
+mongodb_user_admin_name: siteUserAdmin
+mongodb_user_admin_password: B4sDAyjgXFrgsBUxyNXCvach
+mongodb_user_root_password: KLhuqgBJ69XGXLfmXAymKGzN

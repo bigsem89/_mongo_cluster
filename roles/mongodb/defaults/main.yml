@@ -1,23 +1,7 @@
 ---
 # defaults file for mongodb
 mongodb_replication_replset: rp0                  # Enable replication <setname>[/<optionalseedhostlist>]
-mongodb_replication_replindexprefetch: "all"      # specify index prefetching behavior (if secondary) [none|_id_only|all]
-mongodb_replication_oplogsize: 1024               # specifies a maximum size in megabytes for the replication operation log
-mongodb_package: mongodb
-mongodb_version: "4.4"
 mongodb_security_authorization: "enabled"
-mongodb_set_parameters: { "enableLocalhostAuthBypass": "true", "authenticationMechanisms": "SCRAM-SHA-1,MONGODB-CR" }
-mongodb_user_admin_name: siteUserAdmin
-mongodb_user_admin_password: B4sDAyjgXFrgsBUxyNXCvach
-mongodb_net_bindip: 127.0.0.1
 mongodb_primary: "{{ hostvars[groups['mongo_master'][0]].ansible_default_ipv4.address }}"
 mongodb_secondary_1: "{{ hostvars[groups['mongo_replicas'][0]].ansible_default_ipv4.address }}"
 mongodb_secondary_2: "{{ hostvars[groups['mongo_replicas'][1]].ansible_default_ipv4.address }}"
-
-mongodb_users:
-  - {
-    name: testUser,
-    password: W3qasWsKL3UaLhYNBJGM6hKs,
-    roles: readWrite,
-    database: admin
-  }
