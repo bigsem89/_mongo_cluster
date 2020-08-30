@@ -5,11 +5,14 @@
 #                                        #
 # Made by Semyon Aronov                  #
 #----------------------------------------#
+variable "ami_image" {}
+
+
 provider "aws" {}
 
 # aws instances
 resource "aws_instance" "mongo-test1" {
-    ami                    = "ami-03d4fca0a9ced3d1f" #Ubuntu 18.04 linux AMI
+    ami                    = var.ami_image
     instance_type          = "t3.micro"
     key_name               = "Mongo_Cluster"
     vpc_security_group_ids = [aws_security_group.Mongo-sg.id]
@@ -21,7 +24,7 @@ resource "aws_instance" "mongo-test1" {
 }
 
 resource "aws_instance" "mongo-test2" {
-    ami                    = "ami-03d4fca0a9ced3d1f" #Ubuntu 18.04 linux AMI
+    ami                    = var.ami_image
     instance_type          = "t3.micro"
     key_name               = "Mongo_Cluster"
     vpc_security_group_ids = [aws_security_group.Mongo-sg.id]
@@ -33,7 +36,7 @@ resource "aws_instance" "mongo-test2" {
 }
 
 resource "aws_instance" "mongo-test3" {
-    ami                    = "ami-03d4fca0a9ced3d1f" #Ubuntu 18.04 linux AMI
+    ami                    = var.ami_image
     instance_type          = "t3.micro"
     key_name               = "Mongo_Cluster"
     vpc_security_group_ids = [aws_security_group.Mongo-sg.id]
@@ -49,18 +52,22 @@ resource "aws_security_group" "Mongo-sg" {
     name        = "WebServer Security Group"
     description = "My security group"
 
-    ingress {
-      from_port = 22
-      to_port = 22
+    dynamic "ingress" {
+      for_each = ["22", "27017"]
+      content {
+      from_port = ingress.value
+      to_port = ingress.value
       protocol = "tcp"
       cidr_blocks = ["109.252.62.10/32"]
+      }
     }
+
 
     ingress {
       from_port = 27017
       to_port = 27017
       protocol = "tcp"
-      cidr_blocks = ["0.0.0.0/0"]
+      cidr_blocks = ["172.31.0.0/16"]
     }
 
     egress {

@@ -1,5 +1,6 @@
 ---
 # tasks file for mongodb
+
 - name: add hosts
   become: yes
   lineinfile:
@@ -48,7 +49,7 @@
       dest: /etc/mongodb/mongo-keyfile
       owner: mongodb
       mode: '0600'
-      
+
   become: true
 
 - name: Service mongod is running

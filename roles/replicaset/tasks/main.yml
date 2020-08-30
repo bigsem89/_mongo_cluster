@@ -15,11 +15,12 @@
     mongo ./initReplicaset.js
   register: replicaset_result
 
-- name: wait for 10 seconds for MongoDb election completed
+- name: wait for 15 seconds for MongoDb election completed
   wait_for:
-    timeout: 10
+    timeout: 15
   delegate_to: localhost
-  run_once: true
+  when:
+    "'mongo_master' in group_names"
 
   #########################################################################
 - name: Create MongoDb users
@@ -36,3 +37,12 @@
   when:
     "'mongo_master' in group_names"
   #########################################################################
+
+- name: Remove files
+  file:
+    path: "./{{item}}.js"
+    state: absent
+  loop:
+    - initReplicaSet
+    - UserAdmin
+    - UserRoot

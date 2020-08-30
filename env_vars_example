@@ -1,0 +1,3 @@
+$env:AWS_ACCESS_KEY_ID="xxxxxxxxxxxxxxxxxx"
+$env:AWS_SECRET_ACCESS_KEY="xxxxxxxxxxxxxxxxxxxxxxxxxxx"
+$Env:AWS_DEFAULT_REGION="eu-west-3"
