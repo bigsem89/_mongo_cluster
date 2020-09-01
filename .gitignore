@@ -4,6 +4,7 @@
 vendor
 
 *.retry
+*.pem
 
 .terraform
 terraform.tfvars
